@@ -4,7 +4,7 @@ compatibility_date = "2024-11-18"
 
 # Routes
 routes = [
-  { pattern = "ddns.pcwprops.com/*", custom_domain = true }
+  { pattern = "ddns.pcwprops.com", custom_domain = true }
 ]
 
 # Observability
