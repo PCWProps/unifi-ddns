@@ -1,8 +1,10 @@
 name = "unifi-cloudflare-ddns"
 main = "src/index.js"
 compatibility_date = "2024-11-18"
+
+# Routes
 routes = [
-  { custom_domain = "ddns.pcwprops.com", zone_name = "pcwprops.com" }
+  { pattern = "ddns.pcwprops.com/*", custom_domain = true }
 ]
 
 # Observability
