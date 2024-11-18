@@ -10,3 +10,7 @@ routes = [
 # Observability
 [observability]
 enabled = true
+
+# Smart Placement
+[placement]
+mode = "smart"
