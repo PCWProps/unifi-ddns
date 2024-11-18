@@ -4,8 +4,7 @@ compatibility_date = "2023-04-23"
 
 # Custom domain route
 [[routes]]
-pattern = "ddns.pcwprops.com/*"
-script = "unifi-cloudflare-ddns"
+custom_domain = "ddns.pcwprops.com"
 
 # wrangler.toml (wrangler v3.79.0^)
 [observability.logs]
