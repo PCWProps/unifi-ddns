@@ -11,11 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy to Cloudflare Workers
     steps:
-      # Step 1: Checkout repository
       - uses: actions/checkout@v4
-
-      # Step 2: Deploy using Wrangler Action
+      - name: Install Wrangler
+        run: npm install -g wrangler@3.88.0
       - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
