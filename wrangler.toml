@@ -1,6 +1,7 @@
 name = "unifi-cloudflare-ddns"
 account_id = "${CF_ACCOUNT_ID}"
 main = "src/index.js"
+compatibility_date = "204-11-19"
 routes = [
     "https://ddns.pcwprops.com/*"
 ]
