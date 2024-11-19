@@ -87,13 +87,16 @@ var Cloudflare = /* @__PURE__ */ __name(class {
 __name2(Cloudflare, "Cloudflare");
 
 function requireHttps(request) {
-  const { protocol } = new URL(request.url);
-  const forwardedProtocol = request.headers.get("x-forwarded-proto");
-  if (protocol !== "https:" || forwardedProtocol !== "https") {
-    const redirectUrl = new URL(request.url);
-    redirectUrl.protocol = "https:";
-    return Response.redirect(redirectUrl.toString(), 301);
+  if (process.env.NODE_ENV === "production") {
+    const { protocol } = new URL(request.url);
+    const forwardedProtocol = request.headers.get("x-forwarded-proto");
+    if (protocol !== "https:" || forwardedProtocol !== "https") {
+      const redirectUrl = new URL(request.url);
+      redirectUrl.protocol = "https:";
+      return Response.redirect(redirectUrl.toString(), 301);
+    }
   }
+  return null; // Skip redirection in development
 }
 
 function parseBasicAuth(request) {
