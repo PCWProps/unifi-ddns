@@ -5,7 +5,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-  repository_dispatch:
 
 jobs:
   deploy:
@@ -16,5 +15,5 @@ jobs:
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          apiToken: ${{ secrets.PCW_CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.PCW_CLOUDFLARE_ACCOUNT_ID }}
