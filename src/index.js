@@ -156,7 +156,7 @@ async function informAPI(hostnames, ip, name, token) {
   const zones = /* @__PURE__ */ new Map();
   await Promise.all(
     hostnames.map(async (hostname) => {
-      const domainName = name && hostname ends with name ? name : hostname.replace(/.*?([^.]+\.[^.]+)$/, "$1");
+      const domainName = name && hostname.endsWith(name) ? name : hostname.replace(/.*?([^.]+\.[^.]+)$/, "$1"); name : hostname.replace(/.*?([^.]+\.[^.]+)$/, "$1");
       if (!zones.has(domainName)) {
         zones.set(domainName, await cloudflare.findZone(domainName));
       }
