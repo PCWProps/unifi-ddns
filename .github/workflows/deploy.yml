@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+      runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the repository
@@ -22,9 +22,9 @@ jobs:
 
       # Step 3: Authenticate Wrangler and Deploy
      - name: Deploy to Cloudflare Workers
-      run: |
-        echo "account_id=\"${{ secrets.CF_ACCOUNT_ID }}\"" >> wrangler.toml
-        wrangler deploy
-      env:
-        CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          echo "account_id=\"${{ secrets.CF_ACCOUNT_ID }}\"" >> wrangler.toml
+          wrangler deploy
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
