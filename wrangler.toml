@@ -1,6 +1,6 @@
 name = "unifi-cloudflare-ddns"
 main = "src/index.js"
-compatibility_date = "204-11-19"
+compatibility_date = "2024-11-19"
 routes = [
     "https://ddns.pcwprops.com/*"
 ]
