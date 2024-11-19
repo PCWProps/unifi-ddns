@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy:
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the repository
@@ -21,7 +21,7 @@ jobs:
         run: npm install -g wrangler@3.88.0
 
       # Step 3: Authenticate Wrangler and Deploy
-     - name: Deploy to Cloudflare Workers
+      - name: Deploy to Cloudflare Workers
         run: |
           echo "account_id=\"${{ secrets.CF_ACCOUNT_ID }}\"" >> wrangler.toml
           wrangler deploy
