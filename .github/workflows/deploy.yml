@@ -1,27 +1,20 @@
-name: Deploy to Cloudflare Workers
+name: Deploy
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch: # Enables manual triggering in the GitHub Actions UI
-  repository_dispatch: # Allows triggering via API or webhooks
+  workflow_dispatch:
+  repository_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    name: Deploy
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Step 2: Install the latest Wrangler version
-      - name: Install Wrangler
-        run: npm install -g wrangler@3.88.0
-
-      # Step 3: Deploy to Cloudflare Workers
-      - name: Deploy to Cloudflare Workers
-        run: wrangler deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      - uses: actions/checkout@v4
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
