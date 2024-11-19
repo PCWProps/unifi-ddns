@@ -1,20 +1,30 @@
-name: Deploy
+name: Deploy to Cloudflare Workers
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-  repository_dispatch:
+  workflow_dispatch: # Enables manual triggering in the GitHub Actions UI
+  repository_dispatch: # Allows triggering via API or webhooks
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install the latest Wrangler version
+      - name: Install Wrangler
+        run: npm install -g wrangler@3.88.0
+
+      # Step 3: Authenticate Wrangler and Deploy
+      - name: Deploy to Cloudflare Workers
+        run: |
+          echo "account_id=${{ secrets.CF_ACCOUNT_ID }}" >> wrangler.toml
+          wrangler deploy
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }} # Cloudflare API token stored as a GitHub Secret
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }} # Cloudflare Account ID stored as a GitHub Secret
