@@ -1,26 +1,27 @@
-var __defProp = Object.defineProperty;
-var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
+var __defProp2 = Object.defineProperty;
+var __name2 = /* @__PURE__ */ __name((target, value) => __defProp2(target, "name", { value, configurable: true }), "__name");
 
-// src/index.js
-var BadRequestException = class extends Error {
+// Exception Classes
+var BadRequestException = /* @__PURE__ */ __name(class extends Error {
   constructor(reason) {
     super(reason);
     this.status = 400;
     this.statusText = "Bad Request";
   }
-};
-__name(BadRequestException, "BadRequestException");
+}, "BadRequestException");
+__name2(BadRequestException, "BadRequestException");
 
-var CloudflareApiException = class extends Error {
+var CloudflareApiException = /* @__PURE__ */ __name(class extends Error {
   constructor(reason) {
     super(reason);
     this.status = 500;
     this.statusText = "Internal Server Error";
   }
-};
-__name(CloudflareApiException, "CloudflareApiException");
+}, "CloudflareApiException");
+__name2(CloudflareApiException, "CloudflareApiException");
 
-var Cloudflare = class {
+// Cloudflare Class
+var Cloudflare = /* @__PURE__ */ __name(class {
   constructor(options) {
     this.cloudflare_url = "https://api.cloudflare.com/client/v4";
     this.token = options.token;
@@ -87,8 +88,8 @@ var Cloudflare = class {
       throw new CloudflareApiException(`Network error: ${err.message}`);
     }
   }
-};
-__name(Cloudflare, "Cloudflare");
+}, "Cloudflare");
+__name2(Cloudflare, "Cloudflare");
 
 // Ensure HTTPS is used
 function requireHttps(request) {
@@ -99,6 +100,7 @@ function requireHttps(request) {
   }
 }
 __name(requireHttps, "requireHttps");
+__name2(requireHttps, "requireHttps");
 
 // Parse Basic Auth headers
 function parseBasicAuth(request) {
@@ -116,6 +118,7 @@ function parseBasicAuth(request) {
   };
 }
 __name(parseBasicAuth, "parseBasicAuth");
+__name2(parseBasicAuth, "parseBasicAuth");
 
 // Handle incoming requests
 async function handleRequest(request) {
@@ -168,6 +171,7 @@ async function handleRequest(request) {
   });
 }
 __name(handleRequest, "handleRequest");
+__name2(handleRequest, "handleRequest");
 
 // API Interaction
 async function informAPI(hostnames, ip, name, token) {
@@ -198,6 +202,7 @@ async function informAPI(hostnames, ip, name, token) {
   );
 }
 __name(informAPI, "informAPI");
+__name2(informAPI, "informAPI");
 
 // Default export
 var src_default = {
@@ -215,4 +220,3 @@ var src_default = {
   },
 };
 export { src_default as default };
-//# sourceMappingURL=index.js.map

@@ -1,16 +1,16 @@
 name = "unifi-cloudflare-ddns"
+account_id = "${op://PCWICV/sxwjl6i554iqadym74yt2nwatq/Account ID}"
 main = "src/index.js"
-compatibility_date = "2024-11-18"
 
-# Routes
-routes = [
-  { pattern = "ddns.pcwprops.com", custom_domain = true }
-]
-
-# Observability
 [observability]
 enabled = true
+head_sampling_rate = 1 # optional. default = 1.
+
+routes = [
+    "https://ddns.pcwprops.com/*"
+]
 
 # Smart Placement
 [placement]
 mode = "smart"
+
