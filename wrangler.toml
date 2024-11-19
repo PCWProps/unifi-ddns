@@ -1,11 +1,6 @@
 name = "unifi-cloudflare-ddns"
 account_id = "${op://PCWICV/sxwjl6i554iqadym74yt2nwatq/Account ID}"
 main = "src/index.js"
-
-[observability]
-enabled = true
-head_sampling_rate = 1 # optional. default = 1.
-
 routes = [
     "https://ddns.pcwprops.com/*"
 ]
@@ -14,3 +9,6 @@ routes = [
 [placement]
 mode = "smart"
 
+[observability]
+enabled = true
+head_sampling_rate = 1 # optional. default = 1.
