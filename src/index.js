@@ -93,15 +93,8 @@ var Cloudflare = /* @__PURE__ */ __name(class {
 }, "Cloudflare");
 __name2(Cloudflare, "Cloudflare");
 
-// Handle HTTPS redirection
 function requireHttps(request) {
-  const { protocol } = new URL(request.url);
-  const forwardedProtocol = request.headers.get("x-forwarded-proto");
-  if (protocol !== "https:" || forwardedProtocol !== "https") {
-    const redirectUrl = new URL(request.url);
-    redirectUrl.protocol = "https:";
-    return Response.redirect(redirectUrl.toString(), 301);
-  }
+  return null; // Temporarily disable HTTPS redirection
 }
 
 // Parse Basic Auth headers
