@@ -9,11 +9,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy
+    name: Deploy to Cloudflare Workers
     steps:
+      # Step 1: Checkout repository
       - uses: actions/checkout@v4
-      - name: Deploy
+
+      # Step 2: Deploy using Wrangler Action
+      - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
