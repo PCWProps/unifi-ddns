@@ -119,12 +119,20 @@ async function handleRequest(request) {
   if (httpsRedirect) return httpsRedirect;
 
   const { pathname } = new URL(request.url);
+
+  // Handle root path `/`
+  if (pathname === "/") {
+    return new Response("Worker is running locally!", { status: 200 });
+  }
+
   if (pathname === "/favicon.ico" || pathname === "/robots.txt") {
     return new Response(null, { status: 204 });
   }
+
   if (!pathname.endsWith("/update")) {
     return new Response("Not Found.", { status: 404 });
   }
+}
 
   const { username, password } = parseBasicAuth(request);
   const url = new URL(request.url);
