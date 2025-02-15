@@ -4,17 +4,22 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-  repository_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install Wrangler
+      run: npm install -g wrangler@3.109.1
+
+    - name: Run Wrangler
+      run: wrangler publish
