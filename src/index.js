@@ -1,58 +1,84 @@
+// src/index.js
+
+// Define properties for class names
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
-
-// src/index.js
 var __defProp2 = Object.defineProperty;
 var __name2 = /* @__PURE__ */ __name((target, value) => __defProp2(target, "name", { value, configurable: true }), "__name");
-var BadRequestException = /* @__PURE__ */ __name(class extends Error {
+
+// Custom exception classes for specific error handling
+class BadRequestException extends Error {
   constructor(reason) {
     super(reason);
     this.status = 400;
     this.statusText = "Bad Request";
   }
-}, "BadRequestException");
+}
 __name2(BadRequestException, "BadRequestException");
-var CloudflareApiException = /* @__PURE__ */ __name(class extends Error {
+
+class CloudflareApiException extends Error {
   constructor(reason) {
     super(reason);
     this.status = 500;
     this.statusText = "Internal Server Error";
   }
-}, "CloudflareApiException");
+}
 __name2(CloudflareApiException, "CloudflareApiException");
-var Cloudflare = /* @__PURE__ */ __name(class {
-  constructor(options) {
-    this.cloudflare_url = "https://api.cloudflare.com/client/v4";
-    this.token = options.token;
+
+// Utility function to handle fetch requests with token authentication
+async function _fetchWithToken(url, token, options = {}) {
+  options.headers = {
+    ...options.headers,
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`
+  };
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new CloudflareApiException(error.errors?.[0]?.message || "API request failed");
+    }
+    return response;
+  } catch (err) {
+    throw new CloudflareApiException(`Network error: ${err.message}`);
   }
-  // Find zone by name
+}
+
+// Cloudflare API class for managing DNS records
+class Cloudflare {
+  constructor({ token }) {
+    this.cloudflare_url = process.env.CLOUDFLARE_URL || "https://api.cloudflare.com/client/v4";
+    this.token = token;
+  }
+
   async findZone(name) {
-    const response = await this._fetchWithToken(`zones?name=${name}`);
+    const response = await _fetchWithToken(`${this.cloudflare_url}/zones?name=${name}`, this.token);
     const body = await response.json();
     if (!body.success || body.result.length === 0) {
       throw new CloudflareApiException(`Failed to find zone '${name}'`);
     }
     return body.result[0];
   }
-  // Find record by zone and name
+
   async findRecord(zone, name, isIPV4 = true) {
     const rrType = isIPV4 ? "A" : "AAAA";
-    const response = await this._fetchWithToken(`zones/${zone.id}/dns_records?name=${name}`);
+    const response = await _fetchWithToken(`${this.cloudflare_url}/zones/${zone.id}/dns_records?name=${name}`, this.token);
     const body = await response.json();
     if (!body.success || body.result.length === 0) {
       throw new CloudflareApiException(`Failed to find DNS record '${name}'`);
     }
     return body.result?.filter((rr) => rr.type === rrType)?.[0] || null;
   }
-  // Update DNS record
+
   async updateRecord(record, value) {
     if (!record) {
       throw new CloudflareApiException("Record is undefined, cannot update.");
     }
     console.log("Updating record:", record, "with value:", value);
     record.content = value;
-    const response = await this._fetchWithToken(
-      `zones/${record.zone_id}/dns_records/${record.id}`,
+    const response = await _fetchWithToken(
+      `${this.cloudflare_url}/zones/${record.zone_id}/dns_records/${record.id}`,
+      this.token,
       {
         method: "PUT",
         body: JSON.stringify(record)
@@ -64,33 +90,27 @@ var Cloudflare = /* @__PURE__ */ __name(class {
     }
     return body.result[0];
   }
-  // Helper to make requests with token authentication
-  async _fetchWithToken(endpoint, options = {}) {
-    const url = `${this.cloudflare_url}/${endpoint}`;
-    options.headers = {
-      ...options.headers,
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${this.token}`
-    };
-    try {
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        const error = await response.json();
-        throw new CloudflareApiException(error.errors?.[0]?.message || "API request failed");
-      }
-      return response;
-    } catch (err) {
-      throw new CloudflareApiException(`Network error: ${err.message}`);
-    }
-  }
-}, "Cloudflare");
+}
 __name2(Cloudflare, "Cloudflare");
 
 function requireHttps(request) {
   if (process.env.NODE_ENV === "production") {
-    const { protocol } = new URL(request.url);
+    const allowedHostnames = ["*.pcwprops.com", "*.dynamicmarching.com"]; // Add your allowed domains here
+    const { protocol, hostname } = new URL(request.url);
     const forwardedProtocol = request.headers.get("x-forwarded-proto");
+
+    // Function to check if the hostname matches any of the allowed patterns
+    const isAllowedHostname = (hostname) => {
+      return allowedHostnames.some(pattern => {
+        const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`);
+        return regex.test(hostname);
+      });
+    };
+
     if (protocol !== "https:" || forwardedProtocol !== "https") {
+      if (!isAllowedHostname(hostname)) {
+        throw new BadRequestException("Invalid redirection URL.");
+      }
       const redirectUrl = new URL(request.url);
       redirectUrl.protocol = "https:";
       return Response.redirect(redirectUrl.toString(), 301);
@@ -99,6 +119,7 @@ function requireHttps(request) {
   return null; // Skip redirection in development
 }
 
+// Function to parse Basic Authentication headers
 function parseBasicAuth(request) {
   const authorization = request.headers.get("Authorization");
   if (!authorization) return {};
@@ -114,11 +135,7 @@ function parseBasicAuth(request) {
   };
 }
 
-The issue in the `src/index.js` file is a syntax error caused by an unexpected `}` at line 162. The function `handleRequest` is missing a closing brace, and there is an improperly placed brace at line 162.
-
-Here is the corrected version of the `handleRequest` function:
-
-```javascript
+// Main request handler
 async function handleRequest(request) {
   // Temporarily disable HTTPS enforcement
   // const httpsRedirect = requireHttps(request);
@@ -165,17 +182,15 @@ async function handleRequest(request) {
     }
   });
 }
-```
 
-Update your `src/index.js` file with this corrected function and commit the changes. This should resolve the syntax error and fix the failing job.
-
+// Function to inform the Cloudflare API
 async function informAPI(hostnames, ip, name, token) {
   const cloudflare = new Cloudflare({ token });
   const isIPV4 = ip.includes(".");
   const zones = /* @__PURE__ */ new Map();
   await Promise.all(
     hostnames.map(async (hostname) => {
-      const domainName = name && hostname.endsWith(name) ? name : hostname.replace(/.*?([^.]+\.[^.]+)$/, "$1"); name : hostname.replace(/.*?([^.]+\.[^.]+)$/, "$1");
+      const domainName = name && hostname.endsWith(name) ? name : hostname.replace(/.*?([^.]+\.[^.]+)$/, "$1");
       if (!zones.has(domainName)) {
         zones.set(domainName, await cloudflare.findZone(domainName));
       }
@@ -189,6 +204,7 @@ async function informAPI(hostnames, ip, name, token) {
   );
 }
 
+// Export default fetch handler
 export default {
   async fetch(request, env, ctx) {
     try {
