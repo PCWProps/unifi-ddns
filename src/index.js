@@ -114,6 +114,11 @@ function parseBasicAuth(request) {
   };
 }
 
+The issue in the `src/index.js` file is a syntax error caused by an unexpected `}` at line 162. The function `handleRequest` is missing a closing brace, and there is an improperly placed brace at line 162.
+
+Here is the corrected version of the `handleRequest` function:
+
+```javascript
 async function handleRequest(request) {
   // Temporarily disable HTTPS enforcement
   // const httpsRedirect = requireHttps(request);
@@ -132,7 +137,7 @@ async function handleRequest(request) {
   if (!pathname.endsWith("/update")) {
     return new Response("Not Found.", { status: 404 });
   }
-}
+
   const { username, password } = parseBasicAuth(request);
   const url = new URL(request.url);
   const params = url.searchParams;
@@ -160,6 +165,9 @@ async function handleRequest(request) {
     }
   });
 }
+```
+
+Update your `src/index.js` file with this corrected function and commit the changes. This should resolve the syntax error and fix the failing job.
 
 async function informAPI(hostnames, ip, name, token) {
   const cloudflare = new Cloudflare({ token });
